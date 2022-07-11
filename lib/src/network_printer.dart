@@ -62,15 +62,18 @@ class NetworkPrinter {
     PosStyles styles = const PosStyles(),
     int linesAfter = 0,
     bool containsChinese = false,
-    bool isLabel = false,
     int? maxCharsPerLine,
   }) {
     _socket.add(_generator.text(text,
         styles: styles,
         linesAfter: linesAfter,
         containsChinese: containsChinese,
-        isLabel: isLabel,
         maxCharsPerLine: maxCharsPerLine));
+  }
+
+  // TSC mode only
+  void labelText(List<LabelTextRow> texts) {
+    _socket.add(_generator.labelText(texts));
   }
 
   void setGlobalCodeTable(String codeTable) {
