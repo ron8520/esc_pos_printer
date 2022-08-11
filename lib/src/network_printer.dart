@@ -6,8 +6,9 @@
  * See LICENSE for distribution and usage details.
  */
 
+import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data' show Uint8List;
+import 'dart:typed_data';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:image/image.dart';
 import './enums.dart';
@@ -74,6 +75,31 @@ class NetworkPrinter {
   // TSC mode only
   void labelText(List<LabelTextRow> texts) {
     _socket.add(_generator.labelText(texts));
+  }
+
+  //TSC printer status
+  Future<PosPrintResult> tscPrinterStatus(String host,
+      {int port = 91000, Duration timeout = const Duration(seconds: 5)}) async {
+    Future<PosPrintResult> result =
+        Future<PosPrintResult>.value(PosPrintResult.timeout);
+    try {
+      _socket = await Socket.connect(host, port, timeout: timeout);
+      _socket.add(_generator.labelPrinterStatus());
+      _socket.listen((data) async {
+        print('--------receive from printer--------');
+        print(data);
+        _socket.destroy();
+        result = Future<PosPrintResult>.value(PosPrintResult.success);
+      });
+    } catch (e) {
+      result = Future<PosPrintResult>.value(PosPrintResult.timeout);
+    }
+    return Future.delayed(const Duration(seconds: 1), () => result);
+  }
+
+  //TSC printer reset
+  void tscPrinterReset() {
+    _socket.add(_generator.labelPrinterReset());
   }
 
   void setGlobalCodeTable(String codeTable) {
