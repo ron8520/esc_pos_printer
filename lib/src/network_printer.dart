@@ -77,7 +77,29 @@ class NetworkPrinter {
     _socket.add(_generator.labelText(texts));
   }
 
-  //TSC printer status
+  //Gprinter ESC mode Printer Status
+  Future<PosPrintResult> escPrinterStatus(String host,
+      {int port = 91000, Duration timeout = const Duration(seconds: 5)}) async {
+    Future<PosPrintResult> result =
+        Future<PosPrintResult>.value(PosPrintResult.timeout);
+    try {
+      final List<int> request = [16, 4, 2];
+      _socket = await Socket.connect(host, port, timeout: timeout);
+      _socket.add(request);
+      _socket.listen((data) async {
+        print('--------receive from ESC printer--------');
+        print(data);
+        _socket.destroy();
+        result = Future<PosPrintResult>.value(PosPrintResult.success);
+      });
+    } catch (e) {
+      print(e);
+      result = Future<PosPrintResult>.value(PosPrintResult.timeout);
+    }
+    return Future.delayed(const Duration(seconds: 1), () => result);
+  }
+
+  //Gprinter TSC printer status
   Future<PosPrintResult> tscPrinterStatus(String host,
       {int port = 91000, Duration timeout = const Duration(seconds: 5)}) async {
     Future<PosPrintResult> result =
@@ -86,12 +108,13 @@ class NetworkPrinter {
       _socket = await Socket.connect(host, port, timeout: timeout);
       _socket.add(_generator.labelPrinterStatus());
       _socket.listen((data) async {
-        print('--------receive from printer--------');
+        print('--------receive from TSC printer--------');
         print(data);
         _socket.destroy();
         result = Future<PosPrintResult>.value(PosPrintResult.success);
       });
     } catch (e) {
+      print(e);
       result = Future<PosPrintResult>.value(PosPrintResult.timeout);
     }
     return Future.delayed(const Duration(seconds: 1), () => result);
