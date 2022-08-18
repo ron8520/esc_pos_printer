@@ -95,6 +95,7 @@ class NetworkPrinter {
     } catch (e) {
       print(e);
       result = Future<PosPrintResult>.value(PosPrintResult.timeout);
+      _socket.destroy();
     }
     return Future.delayed(const Duration(seconds: 1), () => result);
   }
@@ -116,6 +117,7 @@ class NetworkPrinter {
     } catch (e) {
       print(e);
       result = Future<PosPrintResult>.value(PosPrintResult.timeout);
+      _socket.destroy();
     }
     return Future.delayed(const Duration(seconds: 1), () => result);
   }
