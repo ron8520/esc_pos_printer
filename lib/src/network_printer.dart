@@ -88,8 +88,8 @@ class NetworkPrinter {
       escSocket = await Socket.connect(host, port, timeout: timeout);
       escSocket.add(request);
       escSocket.listen((data) async {
-        print('--------receive from ESC printer--------');
-        print(data);
+        // print('--------receive from ESC printer--------');
+        // print(data);
         escSocket.destroy();
         result = Future<PosPrintResult>.value(PosPrintResult.success);
       });
@@ -110,8 +110,8 @@ class NetworkPrinter {
       tscSocket = await Socket.connect(host, port, timeout: timeout);
       tscSocket.add(_generator.labelPrinterStatus());
       tscSocket.listen((data) async {
-        print('--------receive from TSC printer--------');
-        print(data);
+        // print('--------receive from TSC printer--------');
+        // print(data);
         tscSocket.destroy();
         result = Future<PosPrintResult>.value(PosPrintResult.success);
       });
